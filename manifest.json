@@ -1,0 +1,21 @@
+{
+  "name": "UltraForce 360",
+  "short_name": "UltraForce",
+  "start_url": "fuerza.html",
+  "display": "standalone",
+  "background_color": "#070d1a",
+  "theme_color": "#070d1a",
+  "description": "Ecosistema de gestión de ventas de Ultra Seco",
+  "icons": [
+    {
+      "src": "images/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
