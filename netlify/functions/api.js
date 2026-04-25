@@ -25,10 +25,9 @@ import { neon } from '@neondatabase/serverless';
 const ALLOWED_ORIGIN = 'https://ultraseco.github.io';
 
 const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
+  'Access-Control-Allow-Origin': 'https://ultraseco.github.io',
+  'Access-Control-Allow-Headers': 'Content-Type',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  'Access-Control-Allow-Credentials': 'true',
   'Content-Type': 'application/json',
 };
 
@@ -55,7 +54,7 @@ const safeJson = (str, fallback = {}) => {
 export const handler = async (event, context) => {
   // Responder inmediatamente a preflight CORS
   if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 204, headers: CORS_HEADERS, body: '' };
+    return { statusCode: 200, headers: CORS_HEADERS, body: '' };
   }
 
   const { resource, id } = parsePath(event.path);
