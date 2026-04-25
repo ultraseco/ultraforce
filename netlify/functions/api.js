@@ -17,16 +17,17 @@ export const handler = async (event) => {
   try {
     const sql = neon(process.env.DATABASE_URL);
 
-    // Consulta de prueba simple
-    const result = await sql`SELECT NOW() as server_time`;
+    // Consulta de prueba simple con la tabla products
+    const result = await sql`SELECT * FROM products LIMIT 3`;
 
     return {
       statusCode: 200,
       headers: CORS_HEADERS,
       body: JSON.stringify({
         success: true,
-        message: 'Conexión a Neon OK',
-        timestamp: result[0].server_time
+        message: 'Conexión a Neon OK y tabla products existe',
+        products: result,
+        count: result.length
       }),
     };
 
