@@ -58,7 +58,7 @@ const UF = (() => {
         DB.set('clients', []);
         DB.set('orders', []);
         DB.set('payments', []);
-        DB.set('xplog', []);
+        DB.set('gamification_events', []);
         DB.set('dailytasks', []);
         DB.set('postulations', []);
 

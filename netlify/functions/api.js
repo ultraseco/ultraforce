@@ -8,6 +8,20 @@ const CORS_HEADERS = {
   'Content-Type': 'application/json',
 };
 
+// Todas las tablas que deberían existir en la base de datos
+const TABLES = [
+  'products',
+  'product_options',
+  'orders',
+  'order_items',
+  'clients',
+  'vendors',
+  'users',
+  'postulations',
+  'xplog',
+  'dailytasks'
+];
+
 export const handler = async (event) => {
   // Preflight CORS
   if (event.httpMethod === 'OPTIONS') {
@@ -16,18 +30,41 @@ export const handler = async (event) => {
 
   try {
     const sql = neon(process.env.DATABASE_URL);
+    
+    // Verificar cada tabla individualmente
+    const status = {};
+    
+    for (const table of TABLES) {
+      try {
+        await sql`SELECT 1 FROM ${sql.unsafe(table)} LIMIT 1`;
+        status[table] = { exists: true, ok: true };
+      } catch (err) {
+        status[table] = { 
+          exists: false, 
+          ok: false, 
+          error: err.message,
+          code: err.code
+        };
+      }
+    }
 
-    // Consulta de prueba simple con la tabla products
-    const result = await sql`SELECT * FROM products LIMIT 3`;
+    // Verificar también schemas y metadatos
+    const tables = await sql`SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'`;
+    const tableNames = tables.map(t => t.table_name);
 
     return {
       statusCode: 200,
       headers: CORS_HEADERS,
       body: JSON.stringify({
         success: true,
-        message: 'Conexión a Neon OK y tabla products existe',
-        products: result,
-        count: result.length
+        timestamp: new Date().toISOString(),
+        database_check: status,
+        tables_encontradas: tableNames,
+        resumen: {
+          total: TABLES.length,
+          ok: Object.values(status).filter(s => s.ok).length,
+          error: Object.values(status).filter(s => !s.ok).length
+        }
       }),
     };
 
@@ -38,7 +75,8 @@ export const handler = async (event) => {
       headers: CORS_HEADERS,
       body: JSON.stringify({
         error: 'Error de conexión a base de datos',
-        detail: error.message
+        detail: error.message,
+        code: error.code
       }),
     };
   }

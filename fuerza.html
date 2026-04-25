@@ -36,20 +36,45 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <!-- Product Catalog -->
-  <!-- Assuming the product catalog data is fetched from an API or database -->
   <div id="productCatalog">
     <h2>Ultima Colección de Dispositivos UltraForce</h2>
-    <ul class="products">
-      <li class="product">
-        <img src="images/product1.jpg" alt="Dispositivo 1">
-        <h3>UltraForce Pro</h3>
-        <p>$999.99</p>
-        <button>Add to Cart</button>
-      </li>
-      <!-- Add more product items as needed -->
+    <ul class="products" id="lista-productos">
+      <!-- Los productos se cargaran dinamicamente desde la API -->
     </ul>
   </div>
-  <script src="catalog.js"></script>
+
+  <!-- Cargar productos desde API Neon -->
+  <script>
+    async function cargarProductos() {
+      try {
+        const respuesta = await fetch('https://ultraforce.netlify.app/.netlify/functions/api');
+        const productos = await respuesta.json();
+        
+        const contenedor = document.getElementById('lista-productos');
+        contenedor.innerHTML = '';
+        
+        productos.forEach(producto => {
+          const productoHTML = `
+            <li class="product">
+              <img src="${producto.image_url || 'images/default-product.png'}" alt="${producto.name}">
+              <h3>${producto.name}</h3>
+              <p>${producto.description || ''}</p>
+              ${producto.price ? `<p class="price">$${parseFloat(producto.price).toFixed(2)}</p>` : ''}
+              <button>Add to Cart</button>
+            </li>
+          `;
+          contenedor.innerHTML += productoHTML;
+        });
+        
+      } catch (error) {
+        console.error('Error cargando productos:', error);
+        document.getElementById('lista-productos').innerHTML = '<li style="color: #f59e0b; text-align: center; padding: 2rem;">No se pudieron cargar los productos. Intenta nuevamente.</li>';
+      }
+    }
+    
+    // Cargar productos cuando el documento este listo
+    document.addEventListener('DOMContentLoaded', cargarProductos);
+  </script>
 
   <!-- jsPDF – PDF Generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
