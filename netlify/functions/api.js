@@ -22,10 +22,13 @@
 import { neon } from '@neondatabase/serverless';
 
 // ── CORS headers ─────────────────────────────────────────────────────────────
+const ALLOWED_ORIGIN = 'https://ultraseco.github.io';
+
 const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Allow-Credentials': 'true',
   'Content-Type': 'application/json',
 };
 

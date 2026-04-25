@@ -649,6 +649,38 @@ const UF = (() => {
     };
 
     /* ================================================
+       NETLIFY API HELPERS (Absolute URL for GitHub Pages)
+       ================================================ */
+    const API_BASE = 'https://tu-sitio-en-netlify.netlify.app/.netlify/functions/api';
+
+    async function api(path, opts = {}) {
+        const url = `${API_BASE}${path.startsWith('/') ? path : '/' + path}`;
+        const res = await fetch(url, {
+            ...opts,
+            headers: {
+                'Content-Type': 'application/json',
+                ...(opts.headers || {}),
+            },
+        });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.error || `HTTP ${res.status}`);
+        }
+        return res.json();
+    }
+
+    const API = {
+        products: ()           => api('/products'),
+        product: (id)          => api(`/products/${id}`),
+        orders: (qs = '')      => api(`/orders${qs}`),
+        createOrder: (body)    => api('/orders', { method: 'POST', body: JSON.stringify(body) }),
+        clients: (qs = '')     => api(`/clients${qs}`),
+        createClient: (body)   => api('/clients', { method: 'POST', body: JSON.stringify(body) }),
+        vendors: ()            => api('/vendors'),
+        users: (body)          => api('/users',   { method: 'POST', body: JSON.stringify(body) }),
+    };
+
+    /* ================================================
        FORMATTERS
        ================================================ */
     const fmt = {
@@ -682,6 +714,7 @@ const UF = (() => {
         PRODUCTS, MEDALS, XP_MAP, DB, data, Auth,
         Gamification, Commission, Alerts, Briefing, Tasks, Orders, Analytics,
         toast, openModal, closeModal, fmt, sameMonth, computeStreak,
+        API,
         init() { this.seedDemo(); return this; },
         seedDemo,
     };
