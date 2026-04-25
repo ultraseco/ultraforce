@@ -58,7 +58,14 @@ export const handler = async (event, context) => {
   }
 
   const { resource, id } = parsePath(event.path);
-  const sql = neon(process.env.DATABASE_URL);
+  
+  // Neon Pooler Configuration: Enable connection pooling for serverless workloads
+  const sql = neon(process.env.DATABASE_URL, {
+    arrayMode: false,
+    fullResults: false,
+    pooler: true,
+    connectionTimeout: 10000,
+  });
 
   try {
     // ═══════════════════════════════════════════════════════════════════════
